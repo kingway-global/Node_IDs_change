@@ -13,7 +13,7 @@ Interconnection_ID = 2
 
 #Defining number of nodes
 NODE_NUMBER = [115, 125, 150, 175, 200, 225, 250, 275, 300, 400, 500, 750, 1000]
-#NODE_NUMBER_2 = [75,100,125,150,175,200,225,250,275,300]
+NODE_NUMBER_2 = [500, 750]
 
 #Changing node IDs in selected, excluded nodes as well as outputs in ASU network reduction algorithm
 for NN in NODE_NUMBER:
@@ -34,51 +34,6 @@ for NN in NODE_NUMBER:
     selected_new.to_csv('New_files_new_IDs/selected_nodes_{}.csv'.format(NN),index=False)
     excluded_new.to_csv('New_files_new_IDs/excluded_nodes_{}.csv'.format(NN),index=False)
 
-#Since there are no reduction files for 50 nodes, I started another for loop    
-#for NN in NODE_NUMBER_2:
-    
-    #Changing node IDs in outputs of ASU network reduction algorithm
-#    Summary_df = pd.read_excel('Results_Excluded_Nodes_{}.xlsx'.format(NN),header=0,sheet_name='Summary')
-#    Bus_df = pd.read_excel('Results_Excluded_Nodes_{}.xlsx'.format(NN),header=0,sheet_name='Bus')
-#    Gen_df = pd.read_excel('Results_Excluded_Nodes_{}.xlsx'.format(NN),header=0,sheet_name='Gen')
-#    Branch_df = pd.read_excel('Results_Excluded_Nodes_{}.xlsx'.format(NN),header=0,sheet_name='Branch')
-    
-#    Summary_df_new = Summary_df.copy()
-#    Bus_df_new = Bus_df.copy()
-#    Gen_df_new = Gen_df.copy()
-#    Branch_df_new = Branch_df.copy()
-    
-#    for i in range(len(Branch_df)):
-        
-#        Branch_df_new.loc[i,'fbus'] = int(str(Branch_df_new.loc[i,'fbus']) + str(Interconnection_ID))
-#        Branch_df_new.loc[i,'tbus'] = int(str(Branch_df_new.loc[i,'tbus']) + str(Interconnection_ID))
-        
-#    for i in range(len(Gen_df)):
-        
-#        Gen_df_new.loc[i,'Bus'] = int(str(Gen_df_new.loc[i,'Bus']) + str(Interconnection_ID))
-        
-#    for i in range(len(Bus_df)):
-        
-#        Bus_df_new.loc[i,'bus_i'] = int(str(Bus_df_new.loc[i,'bus_i']) + str(Interconnection_ID))
-        
-#    for i in range(5,len(Summary_df)):
-        
-#        selected_sentence = Summary_df_new.loc[i,'**********Reduction Summary****************']
-#        splitted_sentence = selected_sentence.split()
-        
-#        splitted_sentence[4] = splitted_sentence[4] + str(Interconnection_ID)
-#        splitted_sentence[8] = splitted_sentence[8] + str(Interconnection_ID)
-        
-#        joined_sentence = ' '.join(splitted_sentence)
-        
-#        Summary_df_new.loc[i,'**********Reduction Summary****************'] = joined_sentence
-        
-#    with pd.ExcelWriter('New_files_new_IDs/Results_Excluded_Nodes_{}.xlsx'.format(NN), engine='openpyxl') as writer:  
-#        Summary_df_new.to_excel(writer, sheet_name='Summary',index=False)
-#        Bus_df_new.to_excel(writer, sheet_name='Bus',index=False)
-#        Gen_df_new.to_excel(writer, sheet_name='Gen',index=False)
-#        Branch_df_new.to_excel(writer, sheet_name='Branch',index=False)
-        
 #Changing nodes_to_BA_state
 nodes_to_BA = pd.read_csv('nodes_to_BA_state.csv',header=0)
 del nodes_to_BA['Unnamed: 0']
@@ -294,3 +249,47 @@ nodal_wind_new.columns = buses[0]
 
 nodal_wind_new.to_csv('New_files_new_IDs/nodal_wind2.csv',index=False)
 
+
+#Changing node IDs in outputs of ASU network reduction algorithm
+for NN in NODE_NUMBER_2:
+    
+    Summary_df = pd.read_excel('Results_{}.xlsx'.format(NN),header=0,sheet_name='Summary')
+    Bus_df = pd.read_excel('Results_{}.xlsx'.format(NN),header=0,sheet_name='Bus')
+    Gen_df = pd.read_excel('Results_{}.xlsx'.format(NN),header=0,sheet_name='Gen')
+    Branch_df = pd.read_excel('Results_{}.xlsx'.format(NN),header=0,sheet_name='Branch')
+    
+    Summary_df_new = Summary_df.copy()
+    Bus_df_new = Bus_df.copy()
+    Gen_df_new = Gen_df.copy()
+    Branch_df_new = Branch_df.copy()
+    
+    for i in range(len(Branch_df)):
+        
+        Branch_df_new.loc[i,'fbus'] = int(str(Branch_df_new.loc[i,'fbus']) + str(Interconnection_ID))
+        Branch_df_new.loc[i,'tbus'] = int(str(Branch_df_new.loc[i,'tbus']) + str(Interconnection_ID))
+        
+    for i in range(len(Gen_df)):
+        
+        Gen_df_new.loc[i,'Bus'] = int(str(Gen_df_new.loc[i,'Bus']) + str(Interconnection_ID))
+        
+    for i in range(len(Bus_df)):
+        
+        Bus_df_new.loc[i,'bus_i'] = int(str(Bus_df_new.loc[i,'bus_i']) + str(Interconnection_ID))
+        
+    for i in range(6,len(Summary_df)):
+        
+        selected_sentence = Summary_df_new.loc[i,'Redistribute loads']
+        splitted_sentence = selected_sentence.split()
+        
+        splitted_sentence[4] = splitted_sentence[4] + str(Interconnection_ID)
+        splitted_sentence[8] = splitted_sentence[8] + str(Interconnection_ID)
+        
+        joined_sentence = ' '.join(splitted_sentence)
+        
+        Summary_df_new.loc[i,'Redistribute loads'] = joined_sentence
+        
+    with pd.ExcelWriter('New_files_new_IDs/Results_{}.xlsx'.format(NN), engine='openpyxl') as writer:  
+        Summary_df_new.to_excel(writer, sheet_name='Summary',index=False)
+        Bus_df_new.to_excel(writer, sheet_name='Bus',index=False)
+        Gen_df_new.to_excel(writer, sheet_name='Gen',index=False)
+        Branch_df_new.to_excel(writer, sheet_name='Branch',index=False)
